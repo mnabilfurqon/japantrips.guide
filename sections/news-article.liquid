@@ -1,0 +1,180 @@
+<div class="news-article">
+  <div class="reading-progress" id="readingProgress"></div>
+
+  <aside class="toc">
+    <div class="toc-title">Contents</div>
+    <ul id="tocList"></ul>
+  </aside>
+
+  <article>
+    <div class="article-hero">
+      {% if page.metafields.custom.category %}
+        <span class="article-category">{{ page.metafields.custom.category }}</span>
+      {% endif %}
+      <h1 class="article-title">{{ page.title }}</h1>
+      {% if page.metafields.custom.subtitle %}
+        <p class="article-subtitle">{{ page.metafields.custom.subtitle }}</p>
+      {% endif %}
+      <div class="article-meta">
+        {% if page.metafields.custom.author %}
+          <div>By {{ page.metafields.custom.author }}</div>
+        {% endif %}
+        {% if page.metafields.custom.publish_date %}
+          <div>{{ page.metafields.custom.publish_date }}</div>
+        {% endif %}
+        {% if page.metafields.custom.read_time %}
+          <div>{{ page.metafields.custom.read_time }}</div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if page.metafields.custom.featured_image %}
+      <div class="featured-image">
+        {{ page.metafields.custom.featured_image | image_url: width: 1200 | image_tag }}
+        {% if page.metafields.custom.image_caption %}
+          <p class="image-caption">{{ page.metafields.custom.image_caption }}</p>
+        {% endif %}
+      </div>
+    {% endif %}
+
+    <div class="article-content">
+      {{ page.content }}
+    </div>
+
+    <div class="article-footer">
+      {% if page.metafields.custom.tags %}
+        <div class="article-tags">
+          <h4>Tags</h4>
+          <div class="tags">
+            {% assign tags = page.metafields.custom.tags | split: ',' %}
+            {% for tag in tags %}
+              <a href="{{ pages['news'].url }}?tag={{ tag | strip | handleize }}" class="tag">{{ tag | strip }}</a>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+
+      {% if page.metafields.custom.author_bio %}
+        <div class="author-section">
+          <div class="author-avatar">
+            {% if page.metafields.custom.author_image %}
+              {{ page.metafields.custom.author_image | image_url: width: 120 | image_tag }}
+            {% endif %}
+          </div>
+          <div class="author-info">
+            <h4>{{ page.metafields.custom.author }}</h4>
+            <p>{{ page.metafields.custom.author_bio }}</p>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </article>
+
+  {% if page.metafields.custom.category %}
+    {% assign current_category = page.metafields.custom.category %}
+    {% assign related = pages | where: 'template', 'page.news-article' %}
+    {% assign related_articles = '' | split: '' %}
+
+    {% for article in related %}
+      {% if article.id != page.id and article.metafields.custom.category == current_category %}
+        {% assign related_articles = related_articles | push: article %}
+      {% endif %}
+    {% endfor %}
+
+    {% if related_articles.size > 0 %}
+      <section class="related-articles">
+        <h3>Related Articles</h3>
+        <div class="related-grid">
+          {% for article in related_articles limit: 3 %}
+            <a href="{{ article.url }}" class="related-card">
+              <div class="related-card-image">
+                {% if article.metafields.custom.featured_image %}
+                  {{ article.metafields.custom.featured_image | image_url: width: 400 | image_tag: loading: 'lazy' }}
+                {% endif %}
+              </div>
+              <div class="related-card-category">{{ article.metafields.custom.category }}</div>
+              <h4>{{ article.title }}</h4>
+              <p>{{ article.metafields.custom.subtitle | truncate: 120 }}</p>
+            </a>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+  {% endif %}
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const content = document.querySelector('.article-content');
+    const tocList = document.getElementById('tocList');
+    const headings = content.querySelectorAll('h2');
+
+    headings.forEach((heading, index) => {
+      const id = `section-${index}`;
+      heading.id = id;
+
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = `#${id}`;
+      a.textContent = heading.textContent;
+      li.appendChild(a);
+      tocList.appendChild(li);
+    });
+  });
+
+  window.addEventListener('scroll', () => {
+    const article = document.querySelector('.article-content');
+    if (!article) return;
+    const progress = ((window.scrollY - article.offsetTop + window.innerHeight) / article.scrollHeight) * 100;
+    document.getElementById('readingProgress').style.width = Math.min(Math.max(progress, 0), 100) + '%';
+  });
+
+  window.addEventListener('scroll', () => {
+    const toc = document.querySelector('.toc');
+    const content = document.querySelector('.article-content');
+    if (!toc || !content) return;
+    if (window.scrollY >= content.offsetTop - 200) {
+      toc.classList.add('visible');
+    } else {
+      toc.classList.remove('visible');
+    }
+  });
+
+  const updateTOC = () => {
+    const sections = document.querySelectorAll('.article-content h2');
+    const tocLinks = document.querySelectorAll('.toc a');
+    let current = '';
+
+    sections.forEach((section) => {
+      if (window.scrollY >= section.offsetTop - 150) {
+        current = section.id;
+      }
+    });
+
+    tocLinks.forEach((link) => {
+      link.classList.toggle('active', link.getAttribute('href') === `#${current}`);
+    });
+  };
+
+  window.addEventListener('scroll', updateTOC);
+
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        window.scrollTo({
+          top: target.offsetTop - 120,
+          behavior: 'smooth',
+        });
+      }
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "News Article",
+  "settings": []
+}
+{% endschema %}
