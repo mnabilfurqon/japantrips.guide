@@ -77,7 +77,7 @@
           <div class="author-avatar"></div>
           <div class="author-info">
             <h4>{{ page.metafields.custom.author }}</h4>
-            <p>Travel writer specializing in Japan</p>
+            <p>{{ page.metafields.custom.author_bio }}</p>
           </div>
         </div>
       {% endif %}
@@ -137,71 +137,100 @@
   document.addEventListener('DOMContentLoaded', () => {
     const content = document.querySelector('.article-content');
     const tocList = document.getElementById('tocList');
-    const headings = content.querySelectorAll('h2');
+    const progressEl = document.getElementById('readingProgress');
+    const tocEl = document.querySelector('.toc');
 
-    headings.forEach((heading, index) => {
-      const id = `section-${index}`;
-      heading.id = id;
+    if (!content) return;
 
-      const li = document.createElement('li');
-      const a = document.createElement('a');
-      a.href = `#${id}`;
-      a.textContent = heading.textContent;
-      li.appendChild(a);
-      tocList.appendChild(li);
-    });
-  });
+    content.querySelectorAll('p').forEach((p) => {
+      const raw = (p.textContent || '').trim();
+      const lower = raw.toLowerCase();
 
-  window.addEventListener('scroll', () => {
-    const article = document.querySelector('.article-content');
-    if (!article) return;
-    const progress = ((window.scrollY - article.offsetTop + window.innerHeight) / article.scrollHeight) * 100;
-    document.getElementById('readingProgress').style.width = Math.min(Math.max(progress, 0), 100) + '%';
-  });
-
-  window.addEventListener('scroll', () => {
-    const toc = document.querySelector('.toc');
-    const content = document.querySelector('.article-content');
-    if (!toc || !content) return;
-    if (window.scrollY >= content.offsetTop - 200) {
-      toc.classList.add('visible');
-    } else {
-      toc.classList.remove('visible');
-    }
-  });
-
-  const updateTOC = () => {
-    const sections = document.querySelectorAll('.article-content h2');
-    const tocLinks = document.querySelectorAll('.toc a');
-    let current = '';
-
-    sections.forEach((section) => {
-      if (window.scrollY >= section.offsetTop - 150) {
-        current = section.id;
+      if (lower.startsWith('[caption]')) {
+        p.classList.add('image-caption');
+        p.textContent = raw.replace(/^\[caption\]\s*/i, '');
+      } else if (lower.startsWith('caption:')) {
+        p.classList.add('image-caption');
+        p.textContent = raw.replace(/^caption:\s*/i, '');
       }
     });
 
-    tocLinks.forEach((link) => {
-      link.classList.toggle('active', link.getAttribute('href') === `#${current}`);
+    if (tocList) {
+      tocList.innerHTML = '';
+      const headings = content.querySelectorAll('h2');
+
+      headings.forEach((heading, index) => {
+        const id = heading.id && heading.id.trim() ? heading.id : `section-${index}`;
+        heading.id = id;
+
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = `#${id}`;
+        a.textContent = heading.textContent;
+        li.appendChild(a);
+        tocList.appendChild(li);
+      });
+    }
+
+    document.addEventListener('click', (e) => {
+      const link = e.target.closest('a[href^="#"]');
+      if (!link) return;
+
+      const hash = link.getAttribute('href');
+      if (!hash || hash === '#') return;
+
+      const target = document.querySelector(hash);
+      if (!target) return;
+
+      e.preventDefault();
+
+      const y = target.getBoundingClientRect().top + window.pageYOffset - 120;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+
+      history.replaceState(null, document.title, window.location.pathname + window.location.search);
     });
-  };
 
-  window.addEventListener('scroll', updateTOC);
+    const updateOnScroll = () => {
+      if (progressEl) {
+        const rect = content.getBoundingClientRect();
+        const top = rect.top + window.pageYOffset;
+        const height = content.scrollHeight;
 
-  document.addEventListener('click', (e) => {
-    const link = e.target.closest('a[href^="#"]');
-    if (!link) return;
+        const scrolled = window.pageYOffset - top + window.innerHeight;
+        const progress = (scrolled / height) * 100;
 
-    const hash = link.getAttribute('href');
-    const target = document.querySelector(hash);
-    if (!target) return;
+        progressEl.style.width = Math.min(Math.max(progress, 0), 100) + '%';
+      }
 
-    e.preventDefault();
+      if (tocEl) {
+        if (window.scrollY >= content.offsetTop - 200) tocEl.classList.add('visible');
+        else tocEl.classList.remove('visible');
+      }
 
-    const y = target.getBoundingClientRect().top + window.pageYOffset - 120;
-    window.scrollTo({ top: y, behavior: 'smooth' });
+      const sections = content.querySelectorAll('h2');
+      const tocLinks = document.querySelectorAll('.toc a');
+      let current = '';
 
-    history.replaceState(null, document.title, window.location.pathname + window.location.search);
+      sections.forEach((section) => {
+        if (window.scrollY >= section.offsetTop - 150) current = section.id;
+      });
+
+      tocLinks.forEach((a) => {
+        a.classList.toggle('active', a.getAttribute('href') === `#${current}`);
+      });
+    };
+
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      window.requestAnimationFrame(() => {
+        updateOnScroll();
+        ticking = false;
+      });
+    });
+
+    updateOnScroll();
   });
 </script>
 
