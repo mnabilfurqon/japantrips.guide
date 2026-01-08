@@ -108,7 +108,9 @@
 
 .article-content ul,
 .article-content ol {
-  margin: 1.5rem 0 1.5rem 1.5rem;
+  margin: 1.5rem 0;
+  padding-left: 0;
+  list-style-position: inside;
   line-height: 1.9;
 }
 
@@ -385,6 +387,7 @@
   .article-title {
     font-size: clamp(2rem, 3vw + 1rem, 2.9rem);
   }
+
   .related-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
@@ -401,15 +404,19 @@
   .featured-image {
     margin: 0 auto;
   }
+
   .article-hero {
     padding: 3rem 1.5rem 1.5rem;
   }
+
   .article-title {
     font-size: clamp(1.9rem, 4vw + 0.8rem, 2.3rem);
   }
+
   .article-subtitle {
     font-size: clamp(1.1rem, 1vw + 1rem, 1.3rem);
   }
+
   .article-meta {
     flex-direction: row;
     flex-wrap: wrap;
@@ -417,18 +424,22 @@
     gap: 0.75rem 1.25rem;
     padding-bottom: 1.5rem;
   }
+
   .product-callout {
     flex-direction: column;
     text-align: center;
     padding: 1.5rem;
   }
+
   .related-grid {
     grid-template-columns: 1fr;
   }
+
   .author-section {
     flex-direction: column;
     text-align: center;
   }
+
   .article-tags {
     padding: 0 12px;
     text-align: center;
