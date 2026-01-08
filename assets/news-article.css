@@ -21,7 +21,7 @@
 }
 
 .article-category {
-  font-size: 0.75rem;
+  font-size: clamp(0.85rem, 0.4vw + 0.75rem, 1rem);
   letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--article-accent);
@@ -30,7 +30,7 @@
 }
 
 .article-title {
-  font-size: 3rem;
+  font-size: clamp(2.3rem, 2.6vw + 1.5rem, 3.6rem);
   margin-bottom: 1.5rem;
   font-weight: 300;
   letter-spacing: -0.03em;
@@ -38,14 +38,14 @@
 }
 
 .article-subtitle {
-  font-size: 1.25rem;
+  font-size: clamp(1.2rem, 0.8vw + 1.05rem, 1.55rem);
   color: var(--article-secondary);
   margin-bottom: 2rem;
   line-height: 1.6;
 }
 
 .article-meta {
-  font-size: 0.875rem;
+  font-size: clamp(0.95rem, 0.35vw + 0.85rem, 1.1rem);
   color: var(--article-secondary);
   display: flex;
   justify-content: center;
@@ -66,7 +66,7 @@
 }
 
 .image-caption {
-  font-size: 0.8125rem;
+  font-size: clamp(0.9rem, 0.3vw + 0.8rem, 1.05rem);
   color: var(--article-secondary);
   text-align: center;
   margin-top: 1rem;
@@ -80,19 +80,19 @@
 }
 
 .article-content p {
-  font-size: 1.0625rem;
+  font-size: clamp(1.12rem, 0.45vw + 1.02rem, 1.32rem);
   line-height: 1.9;
   margin-bottom: 1.75rem;
 }
 
 .article-content h2 {
-  font-size: 1.875rem;
+  font-size: clamp(1.9rem, 1.05vw + 1.4rem, 2.4rem);
   margin: 3rem 0 1.5rem;
   font-weight: 300;
 }
 
 .article-content h3 {
-  font-size: 1.375rem;
+  font-size: clamp(1.45rem, 0.7vw + 1.2rem, 1.9rem);
   margin: 2.5rem 0 1rem;
   font-weight: 300;
 }
@@ -103,7 +103,7 @@
   margin: 2.5rem 0;
   font-style: italic;
   color: var(--article-secondary);
-  font-size: 1.125rem;
+  font-size: clamp(1.2rem, 0.5vw + 1.05rem, 1.45rem);
 }
 
 .article-content ul,
@@ -113,10 +113,11 @@
 }
 
 .article-content li {
+  font-size: clamp(1.12rem, 0.45vw + 1.02rem, 1.32rem);
   margin-bottom: 0.75rem;
 }
 
-.article-content .article-image img{
+.article-content .article-image img {
   width: 100%;
   max-width: 100%;
   height: auto;
@@ -131,7 +132,7 @@
 }
 
 .info-box h4 {
-  font-size: 0.875rem;
+  font-size: clamp(0.95rem, 0.35vw + 0.85rem, 1.1rem);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   margin-bottom: 1rem;
@@ -140,7 +141,7 @@
 
 .info-box p,
 .info-box li {
-  font-size: 0.9375rem;
+  font-size: clamp(1rem, 0.35vw + 0.9rem, 1.18rem);
   line-height: 1.7;
   color: var(--article-secondary);
   margin-bottom: 0.75rem;
@@ -167,18 +168,18 @@
 }
 
 .product-callout h4 {
-  font-size: 1rem;
+  font-size: clamp(1.12rem, 0.35vw + 1.02rem, 1.28rem);
   margin-bottom: 0.5rem;
 }
 
 .product-callout p {
-  font-size: 0.875rem;
+  font-size: clamp(1rem, 0.35vw + 0.9rem, 1.18rem);
   color: var(--article-secondary);
   margin-bottom: 1rem;
 }
 
 .product-link {
-  font-size: 0.8125rem;
+  font-size: clamp(0.92rem, 0.3vw + 0.85rem, 1.05rem);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   text-decoration: none;
@@ -205,7 +206,7 @@
 }
 
 .article-tags h4 {
-  font-size: 0.75rem;
+  font-size: clamp(0.85rem, 0.35vw + 0.78rem, 1rem);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   margin-bottom: 1rem;
@@ -218,7 +219,7 @@
 }
 
 .tag {
-  font-size: 0.8125rem;
+  font-size: clamp(0.92rem, 0.3vw + 0.85rem, 1.05rem);
   color: var(--article-secondary);
   text-decoration: none;
   padding: 0.5rem 1rem;
@@ -256,12 +257,12 @@
 }
 
 .author-info h4 {
-  font-size: 1rem;
+  font-size: clamp(1.12rem, 0.35vw + 1.02rem, 1.28rem);
   margin-bottom: 0.5rem;
 }
 
 .author-info p {
-  font-size: 0.875rem;
+  font-size: clamp(1rem, 0.35vw + 0.9rem, 1.18rem);
   color: var(--article-secondary);
   line-height: 1.6;
   margin: 0;
@@ -274,7 +275,7 @@
 }
 
 .related-articles h3 {
-  font-size: 1.5rem;
+  font-size: clamp(1.6rem, 0.9vw + 1.25rem, 2rem);
   margin-bottom: 2.5rem;
   text-align: center;
   font-weight: 300;
@@ -311,7 +312,7 @@
 }
 
 .related-card-category {
-  font-size: 0.75rem;
+  font-size: clamp(0.85rem, 0.35vw + 0.78rem, 1rem);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--article-accent);
@@ -319,13 +320,13 @@
 }
 
 .related-card h4 {
-  font-size: 1.125rem;
+  font-size: clamp(1.2rem, 0.55vw + 1.05rem, 1.45rem);
   margin-bottom: 0.5rem;
   font-weight: 300;
 }
 
 .related-card p {
-  font-size: 0.875rem;
+  font-size: clamp(1rem, 0.35vw + 0.9rem, 1.18rem);
   color: var(--article-secondary);
   line-height: 1.6;
 }
@@ -348,7 +349,7 @@
 }
 
 .toc-title {
-  font-size: 0.75rem;
+  font-size: clamp(0.85rem, 0.35vw + 0.78rem, 1rem);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   margin-bottom: 1rem;
@@ -366,7 +367,7 @@
 }
 
 .toc a {
-  font-size: 0.8125rem;
+  font-size: clamp(0.95rem, 0.3vw + 0.88rem, 1.08rem);
   color: var(--article-secondary);
   text-decoration: none;
   transition: color 0.3s ease;
@@ -381,45 +382,55 @@
 }
 
 @media (max-width: 1024px) {
-  .article-title { 
-    font-size: 2.5rem; 
+  .article-title {
+    font-size: clamp(2rem, 3vw + 1rem, 2.9rem);
   }
-  .related-grid { 
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 2rem; 
+  .related-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
   }
 }
 
 @media (max-width: 900px) {
-  .toc { 
-    display: none; 
+  .toc {
+    display: none;
   }
 }
 
 @media (max-width: 768px) {
-  .article-hero { 
-    padding: 3rem 1.5rem 1.5rem; 
+  .featured-image {
+    margin: 0 auto;
   }
-  .article-title { 
-    font-size: 2rem; 
+  .article-hero {
+    padding: 3rem 1.5rem 1.5rem;
   }
-  .article-subtitle { 
-    font-size: 1.125rem; 
+  .article-title {
+    font-size: clamp(1.9rem, 4vw + 0.8rem, 2.3rem);
   }
-  .article-meta { 
-    flex-direction: column; 
-    gap: 0.5rem; 
+  .article-subtitle {
+    font-size: clamp(1.1rem, 1vw + 1rem, 1.3rem);
   }
-  .product-callout { 
-    flex-direction: column; 
-    text-align: center; 
-    padding: 1.5rem; 
+  .article-meta {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 1.25rem;
+    padding-bottom: 1.5rem;
   }
-  .related-grid { 
-    grid-template-columns: 1fr; 
+  .product-callout {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem;
   }
-  .author-section { 
-    flex-direction: column; 
-    text-align: center; 
+  .related-grid {
+    grid-template-columns: 1fr;
+  }
+  .author-section {
+    flex-direction: column;
+    text-align: center;
+  }
+  .article-tags {
+    padding: 0 12px;
+    text-align: center;
   }
 }
