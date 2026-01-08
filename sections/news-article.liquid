@@ -1,3 +1,5 @@
+{{ 'news-article.css' | asset_url | stylesheet_tag }}
+
 <div class="news-article">
   <div class="reading-progress" id="readingProgress"></div>
 
@@ -11,29 +13,45 @@
       {% if page.metafields.custom.category %}
         <span class="article-category">{{ page.metafields.custom.category }}</span>
       {% endif %}
+
       <h1 class="article-title">{{ page.title }}</h1>
-      {% if page.metafields.custom.subtitle %}
-        <p class="article-subtitle">{{ page.metafields.custom.subtitle }}</p>
+
+      {% if page.metafields.global.description_tag or page.description %}
+        <p class="article-subtitle">
+          {{ page.metafields.global.description_tag | default: page.description }}
+        </p>
       {% endif %}
+
+      {% assign word_count = page.content | strip_html | number_of_words %}
+      {% assign read_minutes = word_count | divided_by: 200 | at_least: 1 %}
+
       <div class="article-meta">
         {% if page.metafields.custom.author %}
           <div>By {{ page.metafields.custom.author }}</div>
         {% endif %}
-        {% if page.metafields.custom.publish_date %}
-          <div>{{ page.metafields.custom.publish_date }}</div>
+        {% if page.published_at %}
+          <div>{{ page.published_at | date: '%B %d, %Y' }}</div>
         {% endif %}
-        {% if page.metafields.custom.read_time %}
-          <div>{{ page.metafields.custom.read_time }}</div>
-        {% endif %}
+        <div>{{ read_minutes }} min read</div>
       </div>
     </div>
 
-    {% if page.metafields.custom.featured_image %}
+    {% if page.image %}
       <div class="featured-image">
-        {{ page.metafields.custom.featured_image | image_url: width: 1200 | image_tag }}
-        {% if page.metafields.custom.image_caption %}
-          <p class="image-caption">{{ page.metafields.custom.image_caption }}</p>
-        {% endif %}
+        <img
+          srcset="
+            {{ page.image | image_url: width: 600 }} 600w,
+            {{ page.image | image_url: width: 900 }} 900w,
+            {{ page.image | image_url: width: 1200 }} 1200w,
+            {{ page.image | image_url: width: 1600 }} 1600w
+          "
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 90vw, 1200px"
+          src="{{ page.image | image_url: width: 1200 }}"
+          alt="{{ page.title }}"
+          loading="eager"
+          width="1200"
+          height="675"
+        >
       </div>
     {% endif %}
 
@@ -54,52 +72,64 @@
         </div>
       {% endif %}
 
-      {% if page.metafields.custom.author_bio %}
+      {% if page.metafields.custom.author %}
         <div class="author-section">
-          <div class="author-avatar">
-            {% if page.metafields.custom.author_image %}
-              {{ page.metafields.custom.author_image | image_url: width: 120 | image_tag }}
-            {% endif %}
-          </div>
+          <div class="author-avatar"></div>
           <div class="author-info">
             <h4>{{ page.metafields.custom.author }}</h4>
-            <p>{{ page.metafields.custom.author_bio }}</p>
+            <p>Travel writer specializing in Japan</p>
           </div>
         </div>
       {% endif %}
     </div>
   </article>
 
-  {% if page.metafields.custom.category %}
-    {% assign current_category = page.metafields.custom.category %}
-    {% assign related = pages | where: 'template', 'page.news-article' %}
-    {% assign related_articles = '' | split: '' %}
+  {% assign related_pages = '' | split: '' %}
 
-    {% for article in related %}
-      {% if article.id != page.id and article.metafields.custom.category == current_category %}
-        {% assign related_articles = related_articles | push: article %}
-      {% endif %}
-    {% endfor %}
+  {% if page.metafields.custom.previous_article.value %}
+    {% assign related_pages = related_pages | push: page.metafields.custom.previous_article.value %}
+  {% endif %}
 
-    {% if related_articles.size > 0 %}
-      <section class="related-articles">
-        <h3>Related Articles</h3>
-        <div class="related-grid">
-          {% for article in related_articles limit: 3 %}
-            <a href="{{ article.url }}" class="related-card">
-              <div class="related-card-image">
-                {% if article.metafields.custom.featured_image %}
-                  {{ article.metafields.custom.featured_image | image_url: width: 400 | image_tag: loading: 'lazy' }}
-                {% endif %}
-              </div>
-              <div class="related-card-category">{{ article.metafields.custom.category }}</div>
-              <h4>{{ article.title }}</h4>
-              <p>{{ article.metafields.custom.subtitle | truncate: 120 }}</p>
-            </a>
-          {% endfor %}
-        </div>
-      </section>
-    {% endif %}
+  {% if page.metafields.custom.next_article.value %}
+    {% assign related_pages = related_pages | push: page.metafields.custom.next_article.value %}
+  {% endif %}
+
+  {% if page.metafields.custom.article.value %}
+    {% assign related_pages = related_pages | push: page.metafields.custom.article.value %}
+  {% endif %}
+
+  {% if related_pages.size > 0 %}
+    <section class="related-articles">
+      <h3>Related Articles</h3>
+      <div class="related-grid">
+        {% for related in related_pages limit: 3 %}
+          <a href="{{ related.url }}" class="related-card">
+            <div class="related-card-image">
+              {% if related.image %}
+                <img
+                  srcset="
+                    {{ related.image | image_url: width: 300 }} 300w,
+                    {{ related.image | image_url: width: 400 }} 400w,
+                    {{ related.image | image_url: width: 600 }} 600w
+                  "
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 400px"
+                  src="{{ related.image | image_url: width: 400 }}"
+                  alt="{{ related.title }}"
+                  loading="lazy"
+                  width="400"
+                  height="300"
+                >
+              {% endif %}
+            </div>
+            {% if related.metafields.custom.category %}
+              <div class="related-card-category">{{ related.metafields.custom.category }}</div>
+            {% endif %}
+            <h4>{{ related.title }}</h4>
+            <p>{{ related.content | strip_html | truncate: 120 }}</p>
+          </a>
+        {% endfor %}
+      </div>
+    </section>
   {% endif %}
 </div>
 

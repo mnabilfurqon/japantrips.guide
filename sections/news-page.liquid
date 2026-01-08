@@ -1,3 +1,5 @@
+{{ 'news-page.css' | asset_url | stylesheet_tag }}
+
 <div
   class="news-page"
   style="padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px;"
@@ -26,14 +28,14 @@
     </div>
   {% endif %}
 
-  {% assign all_articles = pages | where: 'template', 'page.news-article' %}
+  {% assign all_articles = pages | where: 'template_suffix', 'news-article' %}
 
   {% if request.query.category %}
     {% assign filtered_articles = '' | split: '' %}
     {% for article in all_articles %}
       {% assign article_category = article.metafields.custom.category | handleize %}
       {% if article_category == request.query.category %}
-        {% assign filtered_articles = filtered_articles | concat: article %}
+        {% assign filtered_articles = filtered_articles | push: article %}
       {% endif %}
     {% endfor %}
     {% assign display_articles = filtered_articles %}
@@ -43,14 +45,42 @@
 
   <div class="news-grid">
     {% for article in display_articles limit: 12 %}
+      {% assign word_count = article.content | strip_html | number_of_words %}
+      {% assign read_minutes = word_count | divided_by: 200 | at_least: 1 %}
+
       <a href="{{ article.url }}" class="news-card {% if forloop.first %}featured{% endif %}">
         <div class="news-card-image">
-          {% if article.metafields.custom.featured_image %}
-            {{
-              article.metafields.custom.featured_image
-              | image_url: width: 800
-              | image_tag: loading: 'lazy', alt: article.title
-            }}
+          {% if article.image %}
+            {% if forloop.first %}
+              <img
+                srcset="
+                  {{ article.image | image_url: width: 400 }} 400w,
+                  {{ article.image | image_url: width: 600 }} 600w,
+                  {{ article.image | image_url: width: 800 }} 800w,
+                  {{ article.image | image_url: width: 1000 }} 1000w
+                "
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
+                src="{{ article.image | image_url: width: 800 }}"
+                alt="{{ article.title }}"
+                loading="eager"
+                width="800"
+                height="500"
+              >
+            {% else %}
+              <img
+                srcset="
+                  {{ article.image | image_url: width: 300 }} 300w,
+                  {{ article.image | image_url: width: 400 }} 400w,
+                  {{ article.image | image_url: width: 600 }} 600w
+                "
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 400px"
+                src="{{ article.image | image_url: width: 400 }}"
+                alt="{{ article.title }}"
+                loading="lazy"
+                width="400"
+                height="300"
+              >
+            {% endif %}
           {% else %}
             <div style="background: var(--article-light-bg); width: 100%; height: 100%;"></div>
           {% endif %}
@@ -60,33 +90,21 @@
             <span class="news-card-category">{{ article.metafields.custom.category }}</span>
           {% endif %}
           <h2 class="news-card-title">{{ article.title }}</h2>
-          {% if article.metafields.custom.subtitle %}
-            <p class="news-card-excerpt">{{ article.metafields.custom.subtitle | truncate: 150 }}</p>
+          {% if article.content %}
+            {% assign excerpt = article.content | strip_html | truncate: 150 %}
+            <p class="news-card-excerpt">{{ excerpt }}</p>
           {% endif %}
           <div class="news-card-meta">
             {% if article.metafields.custom.author %}
               <span>{{ article.metafields.custom.author }}</span>
             {% endif %}
-            {% if article.metafields.custom.publish_date %}
-              <span>{{ article.metafields.custom.publish_date }}</span>
-            {% endif %}
-            {% if article.metafields.custom.read_time %}
-              <span>{{ article.metafields.custom.read_time }}</span>
-            {% endif %}
+            <span>{{ article.published_at | date: '%B %d, %Y' }}</span>
+            <span>{{ read_minutes }} min read</span>
           </div>
         </div>
       </a>
     {% endfor %}
   </div>
-
-  {% if display_articles.size > 12 %}
-    <div class="news-pagination">
-      <button class="pagination-btn" disabled>← Previous</button>
-      <a href="#" class="pagination-btn active">1</a>
-      <a href="#" class="pagination-btn">2</a>
-      <a href="#" class="pagination-btn">Next →</a>
-    </div>
-  {% endif %}
 </div>
 
 {% schema %}
