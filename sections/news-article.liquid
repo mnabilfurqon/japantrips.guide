@@ -203,7 +203,12 @@
       }
 
       if (tocEl) {
-        if (window.scrollY >= content.offsetTop - 200) tocEl.classList.add('visible');
+        const featured = document.querySelector('.featured-image');
+        const triggerY = featured
+          ? featured.getBoundingClientRect().bottom + window.pageYOffset - 120
+          : content.offsetTop - 200;
+
+        if (window.scrollY >= triggerY) tocEl.classList.add('visible');
         else tocEl.classList.remove('visible');
       }
 
